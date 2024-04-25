@@ -9,6 +9,8 @@ import numpy as np
 
 # os.chdir(os.path.dirname(__file__))
 
+root_path ="/home/prromera/taller_apis_nunca/"
+
 app = Flask(__name__)
 app.config['DEBUG'] = True
 
@@ -22,7 +24,7 @@ def hello(): # Ligado al endopoint "/" o sea el home, con el método GET
 @app.route('/api/v1/predict', methods=['GET'])
 def predict(): # Ligado al endpoint '/api/v1/predict', con el método GET
 
-    model = pickle.load(open('ad_model.pkl','rb'))
+    model = pickle.load(open(root_path+'ad_model.pkl','rb'))
     tv = request.args.get('tv', None)
     radio = request.args.get('radio', None)
     newspaper = request.args.get('newspaper', None)
@@ -42,8 +44,8 @@ def predict(): # Ligado al endpoint '/api/v1/predict', con el método GET
 # Enruta la funcion al endpoint /api/v1/retrain
 
 def retrain(): # Rutarlo al endpoint '/api/v1/retrain/', metodo GET
-    if os.path.exists("data/Advertising_new.csv"):
-        data = pd.read_csv('data/Advertising_new.csv')
+    if os.path.exists(root_path+"data/Advertising_new.csv"):
+        data = pd.read_csv(root_path+'data/Advertising_new.csv')
 
         X_train, X_test, y_train, y_test = train_test_split(data.drop(columns=['sales']),
                                                         data['sales'],
@@ -55,10 +57,11 @@ def retrain(): # Rutarlo al endpoint '/api/v1/retrain/', metodo GET
         rmse = np.sqrt(mean_squared_error(y_test, model.predict(X_test)))
         mape = mean_absolute_percentage_error(y_test, model.predict(X_test))
         model.fit(data.drop(columns=['sales']), data['sales'])
-        pickle.dump(model, open('ad_model.pkl', 'wb'))
+        pickle.dump(model, open(root_path+'ad_model.pkl', 'wb'))
 
         return f"Model retrained. New evaluation metric RMSE: {str(rmse)}, MAPE: {str(mape)}"
     else:
         return f"<h2>New data for retrain NOT FOUND. Nothing done!</h2>"
 
-app.run()
+if__name__=='__main__':
+    app.run()
