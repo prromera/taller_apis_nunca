@@ -63,5 +63,5 @@ def retrain(): # Rutarlo al endpoint '/api/v1/retrain/', metodo GET
     else:
         return f"<h2>New data for retrain NOT FOUND. Nothing done!</h2>"
 
-if__name__=='__main__':
+if __name__=='__main__':
     app.run()
